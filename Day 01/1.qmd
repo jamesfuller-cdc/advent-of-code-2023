@@ -1,0 +1,57 @@
+---
+title: Advent of Code 2023, Day 01
+Author: James Fuller
+Date: 12/6/2023
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+```{r}
+# Source URL for input file is: https://adventofcode.com/2023/day/1/input
+# I couldn't figure out how to easily read it directly from the web 
+
+input_raw <- readLines("input.txt") 
+df <- data.frame(input = input_raw)
+head(df)
+```
+
+```{r}
+# Use regular expression to find location of all digits in the string
+# Is there a better regular expression to actually identify the first and last
+# digits in a string?
+df$alldigits <- gregexpr(pattern = "[0-9]", text = df$input)
+head(df[,c("input","alldigits")])
+```
+
+```{r}
+for (i in 1:nrow(df)) {
+
+  # get simple character object for each row
+  c <- df$input[i]
+  
+  # Get simple vector of digit locations for this row
+  v <- unlist(df$alldigits[[i]])
+  
+  # Get location of first & last digit
+  v_first <- v[1]
+  v_last <- v[length(v)]
+
+  # Get values at those locations
+  c_first <- substr(c, v_first, v_first)
+  c_last <- substr(c, v_last, v_last)
+
+  # Convert to 2 digit number
+  value <- (10*as.numeric(c_first)) + as.numeric(c_last)
+
+  # Put value in df
+  df$value[i] <- value
+
+}
+head(df[,c("input","value")])
+```
+
+```{r}
+answer <- sum(df$value)
+print(answer)
+```
