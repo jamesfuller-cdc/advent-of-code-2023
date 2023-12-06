@@ -11,7 +11,7 @@ editor:
 # Source URL for input file is: https://adventofcode.com/2023/day/1/input
 # I couldn't figure out how to easily read it directly from the web 
 
-input_raw <- readLines("input.txt") 
+input_raw <- readLines("../Data/Day 01.txt") 
 df <- data.frame(input = input_raw)
 head(df)
 ```
@@ -20,6 +20,7 @@ head(df)
 # Use regular expression to find location of all digits in the string
 # Is there a better regular expression to actually identify the first and last
 # digits in a string?
+
 df$alldigits <- gregexpr(pattern = "[0-9]", text = df$input)
 head(df[,c("input","alldigits")])
 ```
