@@ -54,8 +54,11 @@ get_numbers_from_line <- function(str) {
   
 }
 
+# Shell for the final data frame
+# This will contain each gear (star), its line, its x position in the line, and the two adjacent numbers
 df_gears <- data.frame(line=integer(), position=integer(), number1=double(), number2=double())
 
+# Iterate across lines in the engine schematic
 for (i in 1:nrow(df)) {
   
   # Current Line & Adjacent Lines
@@ -74,26 +77,32 @@ for (i in 1:nrow(df)) {
   df_n_before <- get_numbers_from_line(line_before)
   df_n_after <- get_numbers_from_line(line_after)
   
-  # For each star, check for adjacent numbers
+  # For each star, check for adjacent numbers.
+
   for (star in stars_i) {
+    
+    # Check for adjacent numbers
     
     # Adjacent Numbers in the current line (number immediately before or after)
     adjacent_numbers_i <- df_n_i [df_n_i$start == star+1 |
                                   df_n_i$end == star-1,
                                   'number']
     
-    # Adjacent Numbers in the before line
+    # Adjacent Numbers in the before line (the number must start or end with x-1 and x+1)
     adjacent_numbers_before <- df_n_before[df_n_before$start %in% c(star-1, star, star+1) | 
                                            df_n_before$end %in% c(star-1, star, star+1),
                                            'number']
     
-    # Adjacent Numbers in the after line
+    # Adjacent Numbers in the after line (the number must start or end within x-1 and x+1)
     adjacent_numbers_after <- df_n_after[df_n_after$start %in% c(star-1, star, star+1) | 
                                           df_n_after$end %in% c(star-1, star, star+1),
                                           'number']
     
+    # Get all adjacent numbers for this star.
     adjacent_numbers <- c(adjacent_numbers_i, adjacent_numbers_before, adjacent_numbers_after)
     
+    
+    # If length of adjacent numbers == 2, then add to the 'gear' data frame
     if (length(adjacent_numbers)==2) {
       df_gears <- rbind(df_gears, data.frame(line=i, position=star, number1=adjacent_numbers[1], number2=adjacent_numbers[2]))
     }
@@ -101,5 +110,6 @@ for (i in 1:nrow(df)) {
   }
 }
 
+# Calculate "gear ratio" product for each gear
 df_gears$product <- df_gears$number1 * df_gears$number2
 sum(df_gears$product)
